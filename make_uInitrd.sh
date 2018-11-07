@@ -4,7 +4,7 @@ set -e
 
 # prep
 C=$(id | grep -c "(root)" || true)
-if [ "$C" -gt 0 ] ; then
+if [ "$C" != 1 ] ; then
     echo "please re-run as root" >&2
     exit 1
 fi
@@ -71,12 +71,12 @@ fi
 
 if [ ! -d petitboot ] ; then
     git clone --depth 1 -b petitboot-1.6.x https://github.com/open-power/petitboot.git
-    {
+    (
         cd petitboot
         ./bootstrap
         ./configure --with-twin-x11=no --with-twin-fbdev=no --with-signed-boot=no --disable-nls
         make -j "$(nproc)"
-    }
+    )
 fi
 
 if [ ! -d busybox ] ; then
@@ -84,8 +84,8 @@ if [ ! -d busybox ] ; then
     (
         cd busybox
         make defconfig
+        LDFLAGS=--static make -j "$(nproc)"
     )
-    LDFLAGS=--static make -j "$(nproc)"
 fi
 
 if [ ! -d initramfs ] ; then
@@ -101,6 +101,7 @@ usr/bin,\
 usr/sbin,\
 usr/lib/aarch64-linux-gnu,\
 usr/lib/udev/rules.d,\
+usr/local/sbin,\
 usr/share/udhcpc,\
 var/log/petitboot,run,\
 run/udev,\
@@ -153,7 +154,7 @@ libassuan.so.*} initramfs/usr/lib/aarch64-linux-gnu/
     cp -Rp kexec-tools/build/sbin/kexec initramfs/sbin/
     cp -Rp systemd/{rules/*,build/rules/*} initramfs/usr/lib/udev/rules.d/
     rm -f initramfs/usr/lib/udev/rules.d/*-drivers.rules
-    cp -Rp busybox/busybox/examples/udhcp/simple.script initramfs/usr/share/udhcpc/simple.script
+    cp -Rp busybox/examples/udhcp/simple.script initramfs/usr/share/udhcpc/simple.script
     chmod 755 initramfs/usr/share/udhcpc/simple.script
     sed -i '/should be called from udhcpc/d' initramfs/usr/share/udhcpc/simple.script
     cat << EOF > initramfs/usr/share/udhcpc/default.script
@@ -230,10 +231,10 @@ C=$(find initramfs/usr/sbin/ -type f | grep -c petitboot || true)
 if [ "$C" -lt 1 ] ; then
     (
         cd petitboot
-        make DESTDIR="$(realpath ../../initramfs/)" install
+        make DESTDIR="$(realpath ../initramfs/)" install
     )
+    strip initramfs/{sbin/*,lib/aarch64-linux-gnu/*,usr/lib/aarch64-linux-gnu/*,usr/lib/udev/*_id}
     cp initramfs/usr/local/sbin/* initramfs/usr/sbin/
-    strip initramfs/{sbin/*,usr/sbin/*,lib/aarch64-linux-gnu/*,usr/lib/aarch64-linux-gnu/*,usr/lib/udev/*_id}
 fi
 
 if [ ! -f initramfs.igz ] ; then
