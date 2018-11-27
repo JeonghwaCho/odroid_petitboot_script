@@ -70,7 +70,7 @@ fi
 
 
 if [ ! -d petitboot ] ; then
-    git clone --depth 1 -b petitboot-1.6.x https://github.com/open-power/petitboot.git
+    git clone --depth 1 -b petitboot-1.6.x-remove-network https://github.com/JeonghwaCho/petitboot.git
     (
         cd petitboot
         ./bootstrap
