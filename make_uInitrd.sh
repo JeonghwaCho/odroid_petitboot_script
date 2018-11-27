@@ -49,7 +49,7 @@ if [ ! -d systemd ] ; then
 fi
 
 if [ ! -d kexec-tools ] ; then
-    git clone --depth 1 git://git.kernel.org/pub/scm/utils/kernel/kexec/kexec-tools.git
+    git clone --depth 1 git://git.kernel.org/pub/scm/utils/kernel/kexec/kexec-tools.git -b v2.0.18
     (
         cd kexec-tools
         ./bootstrap
