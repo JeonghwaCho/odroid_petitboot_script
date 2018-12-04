@@ -30,7 +30,8 @@ apt-get install -y \
     xsltproc docbook-xsl docbook-xml python-lxml \
     libncurses5-dev libncursesw5-dev \
     libdw-dev libgpgme-dev \
-    meson
+    meson \
+    u-boot-tools
 cd /home/odroid
 mkdir -p ramdisk_petitboot
 cd ramdisk_petitboot

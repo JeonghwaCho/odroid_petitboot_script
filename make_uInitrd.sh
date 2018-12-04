@@ -29,7 +29,8 @@ apt-get install -y \
     gperf libcap-dev libblkid-dev libmount-dev \
     xsltproc docbook-xsl docbook-xml python-lxml \
     libncurses5-dev libncursesw5-dev \
-    libdw-dev libgpgme-dev
+    libdw-dev libgpgme-dev \
+    u-boot-tools
 cd /home/odroid
 mkdir -p ramdisk_petitboot
 cd ramdisk_petitboot
