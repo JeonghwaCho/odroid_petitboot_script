@@ -245,4 +245,6 @@ if [ ! -f initramfs.igz ] ; then
     mkimage -A arm64 -O linux -T ramdisk -C lzma -a 0 -e 0 -n uInitrd.igz -d initramfs.igz uInitrd.igz
 fi
 
+cp uInitrd.igz /media/boot/
+
 echo "Everything is OK."
