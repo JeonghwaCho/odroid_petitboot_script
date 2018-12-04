@@ -151,9 +151,6 @@ libdw.so.*,\
 libgpgme.so.*,\
 libassuan.so.*} initramfs/usr/lib/aarch64-linux-gnu/
     cp -Rp /usr/bin/gpg initramfs/usr/bin/
-#    cp systemd/build/.libs/libudev.so.* initramfs/lib/aarch64-linux-gnu/
-#    cp -Rp systemd/build/{systemd-udevd,udevadm} initramfs/sbin/
-#    cp -Rp systemd/build/*_id initramfs/usr/lib/udev/
     cp systemd/build/src/shared/libsystemd-shared-239.so initramfs/lib/aarch64-linux-gnu/
     cp systemd/build/src/udev/libudev.so* initramfs/lib/aarch64-linux-gnu/
     cp -Rp systemd/build/{systemd-udevd,udevadm} initramfs/sbin/
@@ -251,5 +248,7 @@ if [ ! -f initramfs.igz ] ; then
     )
     mkimage -A arm64 -O linux -T ramdisk -C lzma -a 0 -e 0 -n uInitrd.igz -d initramfs.igz uInitrd.igz
 fi
+
+cp uInitrd.igz /media/boot/
 
 echo "Everything is OK."
