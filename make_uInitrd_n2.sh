@@ -41,16 +41,17 @@ mkdir -p ramdisk_petitboot
 cd ramdisk_petitboot
 
 if [ ! -d systemd ] ; then
-    git clone https://github.com/systemd/systemd.git -b v239
+    git clone https://github.com/systemd/systemd.git -b v234
     (
     cd systemd
+    wget https://dn.odroid.com/temp/0001-systemd-fix-build-with-glibc-2.27.patch
+    patch -p1 < 0001-systemd-fix-build-with-glibc-2.27.patch
+    ./autogen.sh
         mkdir build
         (
             cd build
-            meson --prefix=/usr -Dblkid=true -Dseccomp=false -Dlibcurl=false \
-                                -Dpam=false -Dkmod=false -Dgcrypt=false \
-                                -Delfutils=false -Dbacklight=false -Dlogind=false
-            ninja
+            ./configure --prefix=/usr --enable-blkid --disable-seccomp --disable-libcurl --disable-pam --disable-kmod
+            make -j "$(nproc)"
         )
     )
 fi
@@ -156,10 +157,9 @@ libdw.so.*,\
 libgpgme.so.*,\
 libassuan.so.*} initramfs/usr/lib/aarch64-linux-gnu/
     cp -Rp /usr/bin/gpg initramfs/usr/bin/
-    cp systemd/build/src/shared/libsystemd-shared-239.so initramfs/lib/aarch64-linux-gnu/
-    cp systemd/build/src/udev/libudev.so* initramfs/lib/aarch64-linux-gnu/
+    cp systemd/build/.libs/libudev.so* initramfs/lib/aarch64-linux-gnu/
     cp -Rp systemd/build/{systemd-udevd,udevadm} initramfs/sbin/
-    cp -Rp systemd/build/src/udev/*_id initramfs/usr/lib/udev/
+    cp -Rp systemd/build/*_id initramfs/usr/lib/udev/
     cp -Rp kexec-tools/build/sbin/kexec initramfs/sbin/
     cp -Rp systemd/{rules/*,build/rules/*} initramfs/usr/lib/udev/rules.d/
     rm -f initramfs/usr/lib/udev/rules.d/*-drivers.rules
