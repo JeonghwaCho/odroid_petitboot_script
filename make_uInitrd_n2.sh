@@ -87,6 +87,16 @@ if [ ! -d petitboot ] ; then
     )
 fi
 
+if [ ! -d uboot-parser ] ; then
+    git clone --depth 1 https://github.com/tobetter/uboot-parser.git
+    (
+        cd uboot-parser
+        ./autogen.sh
+        ./configure --prefix=/usr
+        ./make -j "$(nproc)"
+    )
+fi
+
 if [ ! -d busybox ] ; then
     git clone  --depth 1 git://git.busybox.net/busybox
     (
@@ -240,6 +250,10 @@ C=$(find initramfs/usr/sbin/ -type f | grep -c petitboot || true)
 if [ "$C" -lt 1 ] ; then
     (
         cd petitboot
+        make DESTDIR="$(realpath ../initramfs/)" install
+    )
+    (
+        cd uboot-parser
         make DESTDIR="$(realpath ../initramfs/)" install
     )
     strip initramfs/{sbin/*,lib/aarch64-linux-gnu/*,usr/lib/aarch64-linux-gnu/*,usr/lib/udev/*_id}
