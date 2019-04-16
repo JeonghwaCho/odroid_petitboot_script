@@ -50,7 +50,7 @@ if [ ! -d systemd ] ; then
         mkdir build
         (
             cd build
-            ./configure --prefix=/usr --enable-blkid --disable-seccomp --disable-libcurl --disable-pam --disable-kmod
+            ../configure --prefix=/usr --enable-blkid --disable-seccomp --disable-libcurl --disable-pam --disable-kmod
             make -j "$(nproc)"
         )
     )
