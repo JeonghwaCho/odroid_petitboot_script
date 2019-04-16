@@ -93,7 +93,7 @@ if [ ! -d uboot-parser ] ; then
         cd uboot-parser
         ./autogen.sh
         ./configure --prefix=/usr
-        ./make -j "$(nproc)"
+        make -j "$(nproc)"
     )
 fi
 
